@@ -24,11 +24,10 @@ const std::string COURSES_NOT_OFFERED_PATH = "student_output/courses_not_offered
  * You must fill in the types of the fields in this struct.
  * Hint: Remember what types C++ streams work with?!
  */
-struct Course
-{
-    std::string title;
-    std::string number_of_units;
-    std::string quarter;
+struct Course {
+  std::string title;
+  std::string number_of_units;
+  std::string quarter;
 };
 
 /**
@@ -59,24 +58,25 @@ struct Course
  * @param filename The name of the file to parse.
  * @param courses  A vector of courses to populate.
  */
-void parse_csv(std::string filename, std::vector<Course>& courses)
-{
-    std::ifstream ifs(filename);
-    if (!ifs.is_open()) {
+void parse_csv(std::string filename, std::vector<Course>& courses) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
         std::cerr << "Error opening file: " << filename << std::endl;
         return;
     }
     std::string line;
-    std::getline(ifs, line);
-    while (std::getline(ifs, line)) {
-        std::vector<std::string> token = split(line, ',');
+    if (!std::getline(file, line)) {
+        return;
+    }
+    while (std::getline(file, line)) {
+        std::vector<std::string> parts = split(line, ',');
         Course c;
-        c.title = token[0];
-        c.number_of_units = token[1];
-        c.quarter = token[2];
+        c.title = parts[0];
+        c.number_of_units = parts[1];
+        c.quarter = parts[2];
         courses.push_back(c);
     }
-    ifs.close();
+    file.close();
 }
 
 /**
@@ -97,25 +97,26 @@ void parse_csv(std::string filename, std::vector<Course>& courses)
  * @param all_courses A vector of all courses gotten by calling `parse_csv`.
  *                    This vector will be modified by removing all offered courses.
  */
-void write_courses_offered(std::vector<Course>& all_courses)
-{
-    std::ofstream ofs(COURSES_OFFERED_PATH);
-    if (!ofs.is_open()) {
+void write_courses_offered(std::vector<Course>& all_courses) {
+    std::ofstream file(COURSES_OFFERED_PATH);
+    if (!file.is_open()) {
         std::cerr << "Error opening file: " << COURSES_OFFERED_PATH << std::endl;
         return;
     }
-    ofs << "Title,Number of Units,Quarter\n";
+    file << "Title,Number of Units,Quarter\n";
     std::vector<Course> offered_courses;
     for (const Course& course : all_courses) {
         if (course.quarter != "null") {
-            ofs << course.title << "," << course.number_of_units << "," << course.quarter << "\n";
+            file << course.title << "," << course.number_of_units << "," << course.quarter << "\n";
             offered_courses.push_back(course);
         }
     }
+    file.close();
 
     for (const Course& course : offered_courses) {
         delete_elem_from_vector(all_courses, course);
     }
+
 }
 
 /**
@@ -131,33 +132,33 @@ void write_courses_offered(std::vector<Course>& all_courses)
  *
  * @param unlisted_courses A vector of courses that are not offered.
  */
-void write_courses_not_offered(std::vector<Course> unlisted_courses)
-{
-    std::ofstream ofs(COURSES_NOT_OFFERED_PATH);
-    if (!ofs.is_open()) {
-        std::cerr << "Error opening file: " << COURSES_NOT_OFFERED_PATH << std::endl;
+void write_courses_not_offered(std::vector<Course> unlisted_courses) {
+    std::ofstream file(COURSES_NOT_OFFERED_PATH);
+    if (!file.is_open())
+    {
+        std::cerr << "Error opening file: " << COURSES_OFFERED_PATH << std::endl;
         return;
     }
-    ofs << "Title,Number of Units,Quarter\n";
-    for (const Course& course : unlisted_courses) {
-        ofs << course.title << "," << course.number_of_units << "," << course.quarter << "\n";
+    file << "Title,Number of Units,Quarter\n";
+    for (const Course &course : unlisted_courses)
+    {
+        file << course.title << "," << course.number_of_units << "," << course.quarter << "\n";
     }
-    ofs.close();
+    file.close();
 }
 
-int main()
-{
-    /* Makes sure you defined your Course struct correctly! */
-    static_assert(is_valid_course<Course>, "Course struct is not correctly defined!");
+int main() {
+  /* Makes sure you defined your Course struct correctly! */
+  static_assert(is_valid_course<Course>, "Course struct is not correctly defined!");
 
-    std::vector<Course> courses;
-    parse_csv("courses.csv", courses);
+  std::vector<Course> courses;
+  parse_csv("courses.csv", courses);
 
-    /* Uncomment for debugging... */
-    // print_courses(courses);
+  /* Uncomment for debugging... */
+  // print_courses(courses);
 
-    write_courses_offered(courses);
-    write_courses_not_offered(courses);
+  write_courses_offered(courses);
+  write_courses_not_offered(courses);
 
-    return run_autograder();
+  return run_autograder();
 }
