@@ -14,7 +14,7 @@
 #include <string>
 #include <unordered_set>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "Vincent Huang"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -28,7 +28,13 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  * to also change the corresponding functions in `utils.h`.
  */
 std::set<std::string> get_applicants(std::string filename) {
-  // STUDENT TODO: Implement this function.
+    std::set<std::string> applicants;
+    std::string line;
+    std::ifstream ifs(filename);
+    while(std::getline(ifs, line)) {
+        applicants.insert(line);
+    }
+    return applicants;
 }
 
 /**
@@ -39,8 +45,16 @@ std::set<std::string> get_applicants(std::string filename) {
  * @param students  The set of student names.
  * @return          A queue containing pointers to each matching name.
  */
-std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
-  // STUDENT TODO: Implement this function.
+std::queue<const std::string *> find_matches(std::string name, std::set<std::string> &students){
+    std::queue<const std::string *> matches;
+    char first = name[0];
+    char second = name[name.find(' ') + 1];
+    for (const auto& student: students) {
+        if (student[0] == first && student[student.find(' ') + 1] == second) {
+            matches.push(&student);
+        }
+    }
+    return matches;
 }
 
 /**
@@ -53,8 +67,13 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  * @return        Your magical one true love.
  *                Will return "NO MATCHES FOUND." if `matches` is empty.
  */
-std::string get_match(std::queue<const std::string*>& matches) {
-  // STUDENT TODO: Implement this function.
+std::string get_match(std::queue<const std::string *> &matches)
+{
+    if (matches.empty()) {
+        return "NO MATCHES FOUND.";
+    } else {
+        return *(matches.front());
+    }
 }
 
 /* #### Please don't remove this line! #### */
