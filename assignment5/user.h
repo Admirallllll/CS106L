@@ -18,6 +18,7 @@ class User {
      * STUDENT TODO:
      * Your custom operators and special member functions will go here!
      */
+    // declarations as follows:
     friend std::ostream& operator<<(std::ostream& os, const User& user);
     ~User();
     User(const User& user);

@@ -64,10 +64,12 @@ std::ostream& operator<<(std::ostream& os, const User& user) {
     return os;
 }
 
+// destructor
 User::~User() {
     delete[] _friends;
 }
 
+// copy constructor
 User::User(User const& user)
     : _name(user._name), _size(user._size), _capacity(user._capacity) {
     _friends = new std::string[_capacity];
@@ -76,6 +78,7 @@ User::User(User const& user)
     }
 }
 
+// copy assignment operator
 User& User::operator=(const User& user) {
     if (this != &user) {
         delete[] _friends;
